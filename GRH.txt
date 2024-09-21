@@ -1,0 +1,192 @@
+Application de gestion des ressources humaines
+
+description :
+un système pour gérer les informations des employés , les fiches de paie, les congés et les performances ausein de l'entreprise
+
+Employé :
+
+id_employe (identifiant unique)
+nom
+prénom
+date_naissance
+adresse
+email
+numéro_téléphone
+date_embauche
+id_departement
+id_contrat
+Département :
+
+id_departement (identifiant unique)
+nom_departement
+responsable_departement
+description
+Contrat :
+
+id_contrat (identifiant unique)
+type_contrat (CDI, CDD, intérim, etc.)
+date_debut
+date_fin
+salaire_base
+id_employe
+Congé :
+
+id_conge (identifiant unique)
+id_employe
+type_conge (annuel, maladie, maternité, etc.)
+date_debut
+date_fin
+raison
+Paiement :
+
+id_paiement (identifiant unique)
+id_employe
+date_paiement
+montant
+methode_paiement (virement bancaire, chèque, etc.)
+Historique des Promotions :
+
+id_promotion (identifiant unique)
+id_employe
+date_promotion
+nouveau_poste
+ancien_poste
+nouveau_salaire
+Formation :
+
+id_formation (identifiant unique)
+nom_formation
+description_formation
+date_debut
+date_fin
+id_employe (optionnel, si la formation est spécifique à un employé)
+Évaluation des Performances :
+
+id_evaluation (identifiant unique)
+id_employe
+date_evaluation
+score_performance
+commentaires_manager
+Absence :
+
+id_absence (identifiant unique)
+id_employe
+date_absence
+raison
+statut (justifiée, non justifiée)
+Poste :
+
+id_poste (identifiant unique)
+titre_poste
+description_poste
+id_departement
+salaire_associe
+
+
+####################################################################
+Script SQL
+####################################################################
+CREATE TABLE Departement(
+   id_departement INT,
+   nom_departement VARCHAR(50),
+   responsable_departement VARCHAR(50),
+   description VARCHAR(50),
+   PRIMARY KEY(id_departement)
+);
+
+CREATE TABLE poste(
+   id_poste INT,
+   titre_poste VARCHAR(50),
+   description_poste VARCHAR(50),
+   salaire_associe INT,
+   id_departement INT NOT NULL,
+   PRIMARY KEY(id_poste),
+   UNIQUE(titre_poste),
+   FOREIGN KEY(id_departement) REFERENCES Departement(id_departement)
+);
+
+CREATE TABLE employe(
+   id_employe INT,
+   nom VARCHAR(50) NOT NULL,
+   prenom VARCHAR(50),
+   date_naissance DATE,
+   numero_telephone INT,
+   email VARCHAR(50),
+   adresse VARCHAR(50),
+   id_contrat INT,
+   date_embauche DATE,
+   id_departement INT NOT NULL,
+   PRIMARY KEY(id_employe),
+   FOREIGN KEY(id_departement) REFERENCES Departement(id_departement)
+);
+
+CREATE TABLE contrat(
+   id_contrat INT,
+   type_contrat VARCHAR(50),
+   date_debut DATE,
+   date_fin DATE,
+   salaire_base INT,
+   id_employe INT NOT NULL,
+   PRIMARY KEY(id_contrat),
+   FOREIGN KEY(id_employe) REFERENCES employe(id_employe)
+);
+
+CREATE TABLE payement(
+   id_paiement INT,
+   date_paiement DATE,
+   montant INT,
+   methode_paiement VARCHAR(50),
+   id_employe INT NOT NULL,
+   PRIMARY KEY(id_paiement),
+   FOREIGN KEY(id_employe) REFERENCES employe(id_employe)
+);
+
+CREATE TABLE congés(
+   id_congé INT,
+   type_congé VARCHAR(50),
+   date_debut DATE,
+   date_fin DATE,
+   raison VARCHAR(50),
+   id_employe INT NOT NULL,
+   PRIMARY KEY(id_congé),
+   FOREIGN KEY(id_employe) REFERENCES employe(id_employe)
+);
+
+CREATE TABLE Evalutaion_performance(
+   id_evaluation INT,
+   date_evaluation DATE,
+   score_performance INT,
+   commentaires_manager VARCHAR(50),
+   id_employe INT NOT NULL,
+   PRIMARY KEY(id_evaluation),
+   FOREIGN KEY(id_employe) REFERENCES employe(id_employe)
+);
+
+CREATE TABLE absence(
+   id_absence INT,
+   date_abscence DATE,
+   raison VARCHAR(50),
+   statut LOGICAL,
+   id_employe INT NOT NULL,
+   PRIMARY KEY(id_absence),
+   FOREIGN KEY(id_employe) REFERENCES employe(id_employe)
+);
+
+CREATE TABLE promotion(
+   id_promotion INT,
+   date_promotion DATE,
+   nouveau_poste VARCHAR(50),
+   ancien_poste VARCHAR(50),
+   nouveau_salaire INT,
+   id_employe INT NOT NULL,
+   PRIMARY KEY(id_promotion),
+   FOREIGN KEY(id_employe) REFERENCES employe(id_employe)
+);
+
+CREATE TABLE qualifier(
+   id_employe INT,
+   id_poste INT,
+   PRIMARY KEY(id_employe, id_poste),
+   FOREIGN KEY(id_employe) REFERENCES employe(id_employe),
+   FOREIGN KEY(id_poste) REFERENCES poste(id_poste)
+);
