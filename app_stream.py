@@ -6,7 +6,7 @@ import pandas as pd
 conn = mysql.connector.connect(
     host="localhost",
     user="gestion_rh",
-    password="Cyvjy@7224",
+    password="Cy###224",
     database="gestion de ressources humaines"
 )
 cursor = conn.cursor()
